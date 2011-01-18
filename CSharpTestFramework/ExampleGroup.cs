@@ -69,6 +69,14 @@ namespace CSharpTestFramework
 			m_name = name;
 		}
 		
+		public string Status
+		{
+			get
+			{
+				return m_status;
+			}
+		}
+
 		public string ErrorLog
 		{
 			get
@@ -149,13 +157,7 @@ namespace CSharpTestFramework
 			}
 			
 			m_status = String.Format ("{0} run, {1} failures", m_run, m_failures);
-		}
-		
-		// TODO: Make this into a property
-		public string Status()
-		{
-			return m_status;
-		}
+		}		
 	}
 }
 

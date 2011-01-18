@@ -13,7 +13,7 @@ namespace CSharpTestFramework
 					() => { throw new Exception(); }
 				);
 				exampleGroupWithFailure.Run();
-				if(exampleGroupWithFailure.Status() != "1 run, 1 failures")
+				if(exampleGroupWithFailure.Status != "1 run, 1 failures")
 					throw new Exception();
 			} catch {
 				Console.WriteLine("The bootstrap test failed");
@@ -30,14 +30,14 @@ namespace CSharpTestFramework
 
 			mainExampleGroup.Add("An unrun ExampleGroup Status indicates it has not been run",
 				(dynamic our) => {
-					Expect.That(our.exampleGroup.Status() == "Not run");
+					Expect.That(our.exampleGroup.Status == "Not run");
 				}
 			);
 			
 			mainExampleGroup.Add("ExampleGroup Status with no Examples",
 				(dynamic our) => {
 					our.exampleGroup.Run();
-					Expect.That(our.exampleGroup.Status() == "0 run, 0 failures");
+					Expect.That(our.exampleGroup.Status == "0 run, 0 failures");
 				}
 			);
 			
@@ -45,7 +45,7 @@ namespace CSharpTestFramework
 				(dynamic our) => {
 					our.exampleGroup.Add("Valid Example", validExample);
 					our.exampleGroup.Run();
-					Expect.That(our.exampleGroup.Status() == "1 run, 0 failures");
+					Expect.That(our.exampleGroup.Status == "1 run, 0 failures");
 				}
 			);
 			
@@ -54,7 +54,7 @@ namespace CSharpTestFramework
 					our.exampleGroup.Add("Valid Example", validExample);
 					our.exampleGroup.Add("Invalid Example", failingExample);
 					our.exampleGroup.Run();
-					Expect.That(our.exampleGroup.Status() == "2 run, 1 failures");
+					Expect.That(our.exampleGroup.Status == "2 run, 1 failures");
 				}
 			);
 			
@@ -105,7 +105,7 @@ namespace CSharpTestFramework
 					Expect.That(ourInner.TestObject == "value of TestObject");
 				}));
 				our.exampleGroup.Run();
-				Expect.That(our.exampleGroup.Status() == "1 run, 0 failures");
+				Expect.That(our.exampleGroup.Status == "1 run, 0 failures");
 			});
 			
 			// TODO: Make the Expect fail correctly and improve the framework to prevent this type of error
@@ -115,7 +115,7 @@ namespace CSharpTestFramework
 					Expect.That(our.TestObject == "wrong value of TestObject");
 				}));
 				our.exampleGroup.Run();
-				Expect.That(our.exampleGroup.Status() == "1 run, 1 failures");
+				Expect.That(our.exampleGroup.Status == "1 run, 1 failures");
 			});
 			
 			mainExampleGroup.Add("ExampleGroup with multiple Let expressions", (dynamic our) => {
@@ -126,7 +126,7 @@ namespace CSharpTestFramework
 					Expect.That(ourInner.TestObject2 == 2);
 				}));
 				our.exampleGroup.Run();
-				Expect.That(our.exampleGroup.Status() == "1 run, 0 failures");
+				Expect.That(our.exampleGroup.Status == "1 run, 0 failures");
 			});
 			
 			mainExampleGroup.Add("ExampleGroup only evaluates Let expressions once per Example", (dynamic our) => {
@@ -138,7 +138,7 @@ namespace CSharpTestFramework
 					Expect.That(ourInner.TestObject == 1);
 				}));
 				our.exampleGroup.Run();
-				Expect.That(our.exampleGroup.Status() == "1 run, 0 failures");
+				Expect.That(our.exampleGroup.Status == "1 run, 0 failures");
 			});
 			
 			mainExampleGroup.Add("ExampleGroup re-evaluates Let expressions for each Example", (dynamic our) => {
@@ -152,14 +152,14 @@ namespace CSharpTestFramework
 					Expect.That(ourInner.TestObject == 2);
 				}));
 				our.exampleGroup.Run();
-				Expect.That(our.exampleGroup.Status() == "2 run, 0 failures");
+				Expect.That(our.exampleGroup.Status == "2 run, 0 failures");
 			});
 			
 			mainExampleGroup.Run();
 			
 			Console.WriteLine(mainExampleGroup.Report);
 			Console.WriteLine(mainExampleGroup.ErrorLog);
-			Console.WriteLine(mainExampleGroup.Status());
+			Console.WriteLine(mainExampleGroup.Status);
 		}
 	}
 }
