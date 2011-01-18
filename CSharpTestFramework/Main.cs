@@ -97,17 +97,30 @@ namespace CSharpTestFramework
 				
 				testGroup.Let("TestObject", () => accesses["TestObject lookups"] += 1);
 				testGroup.Add((dynamic our) => {
-//					Console.WriteLine(String.Format("{0}", our.TestObject));
 					Expect.That(our.TestObject == 1);
 					Expect.That(our.TestObject == 1);
 				});
 				testGroup.Run();
-//				Console.WriteLine(String.Format("x {0}", accesses["TestObject lookups"]));
-//				Expect.That(accesses["TestObject lookups"] == 1);
 				Expect.That(testGroup.Status() == "1 run, 0 failures");
 			});
 			
-			// TODO: Let expressions are re-evaluated for each test
+			// Let expressions are re-evaluated for each test
+			mainTestGroup.Add(() => {
+				var testGroup = new TestGroup();
+				
+				var accesses = new Dictionary<string, int>() { { "TestObject lookups", 0 } };
+				
+				testGroup.Let("TestObject", () => accesses["TestObject lookups"] += 1);
+				testGroup.Add((dynamic our) => {
+					Expect.That(our.TestObject == 1);
+				});
+				testGroup.Add((dynamic our) => {
+					Expect.That(our.TestObject == 2);
+				});
+				testGroup.Run();
+				Console.WriteLine(String.Format("x {0}", accesses["TestObject lookups"]));
+				Expect.That(testGroup.Status() == "2 run, 0 failures");
+			});
 			
 			mainTestGroup.Run();
 			
