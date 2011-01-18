@@ -57,9 +57,10 @@ namespace CSharpTestFramework
 		
 		string m_name;
 		string m_status = "Not run";
+		string m_report = "";
 		uint m_run;
 		uint m_failures;
-		List<Example> m_examples = new List<Example>();
+		List<NamedExample> m_examples = new List<NamedExample>();
 		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
 		List<Exception> m_exceptions = new List<Exception>();
 		
@@ -81,7 +82,7 @@ namespace CSharpTestFramework
 		{
 			get
 			{
-				return "Example group: " + m_name;
+				return m_report;
 			}
 		}
 		
@@ -89,26 +90,56 @@ namespace CSharpTestFramework
 		{
 			m_letExpressions.Add(objectName, letExpression);
 		}
-
-		public void Add(Example example)
+		
+		class NamedExample
 		{
-			m_examples.Add(example);
+			string m_name;
+			Example m_example;
+			
+			public NamedExample(string name, Example example)
+			{
+				m_name = name;
+				m_example = example;
+			}
+			
+			public string Name
+			{
+				get
+				{
+					return m_name;	
+				}
+			}
+			
+			public void Run(ExampleContext exampleContext)
+			{
+				m_example(exampleContext);
+			}
+		}
+
+		public void Add(string name, Example example)
+		{
+			m_examples.Add(new NamedExample(name, example));
 		}
 		
-		public void Add(ContextFreeExample example)
+		public void Add(string name, ContextFreeExample example)
 		{
-			m_examples.Add((dynamic unusedContext) => example());
+			m_examples.Add(new NamedExample(name, (dynamic unusedContext) => example()));
 		}
-
-		public void Run ()
+		
+		// TODO: Extract reporting
+		public void Run()
 		{
+			m_report += "Example group: " + m_name + "\n";
+			
 			foreach (var example in m_examples) {
 				var context = new ExampleContext(m_letExpressions);
 
 				m_run++;
 				
+				m_report += "- " + example.Name + "\n";
+				
 				try {
-					example(context);
+					example.Run(context);
 				} catch (Exception exception) {
 					m_failures++;
 					m_exceptions.Add(exception);
