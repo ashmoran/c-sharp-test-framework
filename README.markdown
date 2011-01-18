@@ -1,4 +1,4 @@
-= C# Test Framework
+# C# Test Framework
 
 I wanted to learn C# and the obvious way to do this is
 to write a test framework, so here are my efforts.  It's
