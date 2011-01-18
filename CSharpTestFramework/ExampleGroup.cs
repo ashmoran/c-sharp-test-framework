@@ -136,14 +136,16 @@ namespace CSharpTestFramework
 
 				m_run++;
 				
-				m_report += "- " + example.Name + "\n";
-				
 				try {
 					example.Run(context);
+					m_report += "-";
 				} catch (Exception exception) {
 					m_failures++;
 					m_exceptions.Add(exception);
+					m_report += "X";
 				}
+				
+				m_report += " " + example.Name + "\n";
 			}
 			
 			m_status = String.Format ("{0} run, {1} failures", m_run, m_failures);

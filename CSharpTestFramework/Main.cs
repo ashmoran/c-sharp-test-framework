@@ -82,8 +82,16 @@ namespace CSharpTestFramework
 				our.exampleGroup.Add("Example name 1", passingTest);
 				our.exampleGroup.Add("Example name 2", passingTest);
 				our.exampleGroup.Run();
-			    Expect.That(our.exampleGroup.Report.Contains("Example name 1"));
-				Expect.That(our.exampleGroup.Report.Contains("Example name 2"));
+			    Expect.That(our.exampleGroup.Report.Contains("- Example name 1"));
+				Expect.That(our.exampleGroup.Report.Contains("- Example name 2"));
+			});
+
+			mainExampleGroup.Add("ExampleGroup Report flags failing Examples", (dynamic our) => {
+				our.exampleGroup.Add("Example name 1", failingTest);
+				our.exampleGroup.Add("Example name 2", failingTest);
+				our.exampleGroup.Run();
+			    Expect.That(our.exampleGroup.Report.Contains("X Example name 1"));
+				Expect.That(our.exampleGroup.Report.Contains("X Example name 2"));
 			});
 
 			mainExampleGroup.Add("ExampleGroup with Let expression and one passing Example", (dynamic our) => {
