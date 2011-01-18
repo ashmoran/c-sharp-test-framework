@@ -63,6 +63,17 @@ namespace CSharpTestFramework
 					Expect.That(our.testGroup.Status() == "2 run, 1 failures");
 				}
 			);
+			
+			// Error output from a failing test
+			mainTestGroup.Add(
+				(dynamic our) => {
+					our.testGroup.Add((ContextFreeExample)(() => { throw new Exception("This fails"); }));
+					our.testGroup.Add((ContextFreeExample)(() => { throw new Exception("And this fails too"); }));
+					our.testGroup.Run();
+					Expect.That(our.testGroup.ErrorLog.Contains("This fails"));
+				    Expect.That(our.testGroup.ErrorLog.Contains("And this fails too"));
+				}
+			);
 
 			// Let block with passing example
 			mainTestGroup.Add((dynamic our) => {
@@ -78,6 +89,7 @@ namespace CSharpTestFramework
 			mainTestGroup.Add((dynamic our) => {
 				our.testGroup.Let("TestObject", (Be)(() => "value of TestObject"));
 				our.testGroup.Add((Example)((dynamic ourInner) => {
+					// TODO make this fail correctly and improve the framework to prevent this type of error
 					Expect.That(our.TestObject == "wrong value of TestObject");
 				}));
 				our.testGroup.Run();
@@ -126,6 +138,7 @@ namespace CSharpTestFramework
 			
 			mainTestGroup.Run();
 			
+			Console.WriteLine(mainTestGroup.ErrorLog);
 			Console.WriteLine(mainTestGroup.Status());
 		}
 	}

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace CSharpTestFramework
 {
 	public delegate void Example(dynamic context);
+	// TODO: Rename to SimpleExample?
 	public delegate void ContextFreeExample();
 	public delegate object Be(); // As in: Let("Foo", (Be)(() => "Bar))
 
@@ -57,6 +60,16 @@ namespace CSharpTestFramework
 		uint m_failures;
 		List<Example> m_examples = new List<Example>();
 		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
+		List<Exception> m_exceptions = new List<Exception>();
+
+		public string ErrorLog
+		{
+			get
+			{
+				return m_exceptions.
+					Aggregate("", (outputString, exception) => outputString + "\n" + exception.Message + "\n" + exception.StackTrace + "\n");
+			}
+		}
 		
 		public void Let(string objectName, Be letExpression)
 		{
@@ -82,17 +95,15 @@ namespace CSharpTestFramework
 				
 				try {
 					example(context);
-				} catch (Exception e) {
+				} catch (Exception exception) {
 					m_failures++;
-					// TODO: Turn this debugging info into a feature
-					Console.WriteLine(e.Message);
-					Console.WriteLine(e.StackTrace);
+					m_exceptions.Add(exception);
 				}
 			}
 			
 			m_status = String.Format ("{0} run, {1} failures", m_run, m_failures);
 		}
-
+		
 		public string Status()
 		{
 			return m_status;
