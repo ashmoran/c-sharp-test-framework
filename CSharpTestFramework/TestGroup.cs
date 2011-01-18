@@ -6,7 +6,7 @@ namespace CSharpTestFramework
 {
 	public delegate void Test();
 	public delegate void Example(dynamic context);
-	public delegate Object TestObjectExpression();
+	public delegate Object Be(); // As in: Let("Foo", (Be)(() => "Bar))
 
 	public class TestGroup
 	{
@@ -14,11 +14,11 @@ namespace CSharpTestFramework
 		public class TestContext : DynamicObject
 		{
 			// TODO: Name this type
-			Dictionary<string, TestObjectExpression> m_letExpressions;
+			Dictionary<string, Be> m_letExpressions;
 			
 			Dictionary<string, object> m_evaluatedExpressions = new Dictionary<string, object>();
 			
-			public TestContext(Dictionary<string, TestObjectExpression> letExpressions)
+			public TestContext(Dictionary<string, Be> letExpressions)
 			{
 				m_letExpressions = letExpressions;
 			}
@@ -33,7 +33,7 @@ namespace CSharpTestFramework
 					return foundExpressionValue;
 				}
 				
-				TestObjectExpression expression;
+				Be expression;
 				bool foundExpression;
 		        foundExpression = m_letExpressions.TryGetValue(binder.Name, out expression);
 				
@@ -55,9 +55,9 @@ namespace CSharpTestFramework
 		uint m_failures;
 		List<Test> m_tests = new List<Test>();
 		List<Example> m_contextualTests = new List<Example>();
-		Dictionary<string, TestObjectExpression> m_letExpressions = new Dictionary<string, TestObjectExpression>();
+		Dictionary<string, Be> m_letExpressions = new Dictionary<string, Be>();
 		
-		public void Let(string objectName, TestObjectExpression testObjectExpression)
+		public void Let(string objectName, Be testObjectExpression)
 		{
 			m_letExpressions.Add(objectName, testObjectExpression);
 		}
