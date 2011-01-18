@@ -39,100 +39,89 @@ namespace CSharpTestFramework
 			
 			// An empty TestGroup
 			mainTestGroup.Add(
-				() => {
-					var testGroup = new TestGroup();
-					testGroup.Run();
-					Expect.That(testGroup.Status() == "0 run, 0 failures");
+				(dynamic our) => {
+					our.testGroup.Run();
+					Expect.That(our.testGroup.Status() == "0 run, 0 failures");
 				}
 			);
 			
 			// A group with one passing test
 			mainTestGroup.Add(
-				() => {
-					var testGroup = new TestGroup();
-					testGroup.Add(passingTest);
-					testGroup.Run();
-					Expect.That(testGroup.Status() == "1 run, 0 failures");
+				(dynamic our) => {
+					our.testGroup.Add(passingTest);
+					our.testGroup.Run();
+					Expect.That(our.testGroup.Status() == "1 run, 0 failures");
 				}
 			);
 			
 			// A group with one passing test and one failing test
 			mainTestGroup.Add(
-				() => {
-					var testGroup = new TestGroup();
-					testGroup.Add(passingTest);
-					testGroup.Add(failingTest);
-					testGroup.Run();
-					Expect.That(testGroup.Status() == "2 run, 1 failures");
+				(dynamic our) => {
+					our.testGroup.Add(passingTest);
+					our.testGroup.Add(failingTest);
+					our.testGroup.Run();
+					Expect.That(our.testGroup.Status() == "2 run, 1 failures");
 				}
 			);
 
 			// Let block with passing example
-			mainTestGroup.Add(() => {
-				var testGroup = new TestGroup();
-				testGroup.Let("TestObject", () => "value of TestObject");
-				testGroup.Add((dynamic our) => {
-					Expect.That(our.TestObject == "value of TestObject");
-				});
-				testGroup.Run();
-				Expect.That(testGroup.Status() == "1 run, 0 failures");
+			mainTestGroup.Add((dynamic our) => {
+				our.testGroup.Let("TestObject", (TestObjectExpression)(() => "value of TestObject"));
+				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+					Expect.That(ourInner.TestObject == "value of TestObject");
+				}));
+				our.testGroup.Run();
+				Expect.That(our.testGroup.Status() == "1 run, 0 failures");
 			});
 			
 			// Let block with failing example
-			mainTestGroup.Add(() => {
-				var testGroup = new TestGroup();
-				testGroup.Let("TestObject", () => "value of TestObject");
-				testGroup.Add((dynamic our) => {
+			mainTestGroup.Add((dynamic our) => {
+				our.testGroup.Let("TestObject", (TestObjectExpression)(() => "value of TestObject"));
+				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
 					Expect.That(our.TestObject == "wrong value of TestObject");
-				});
-				testGroup.Run();
-				Expect.That(testGroup.Status() == "1 run, 1 failures");
+				}));
+				our.testGroup.Run();
+				Expect.That(our.testGroup.Status() == "1 run, 1 failures");
 			});
 			
 			// Multiple let blocks
-			mainTestGroup.Add(() => {
-				var testGroup = new TestGroup();
-				testGroup.Let("TestObject1", () => 1);
-				testGroup.Let("TestObject2", () => 2);
-				testGroup.Add((dynamic our) => {
-					Expect.That(our.TestObject1 == 1);
-					Expect.That(our.TestObject2 == 2);
-				});
-				testGroup.Run();
-				Expect.That(testGroup.Status() == "1 run, 0 failures");
+			mainTestGroup.Add((dynamic our) => {
+				our.testGroup.Let("TestObject1", (TestObjectExpression)(() => 1));
+				our.testGroup.Let("TestObject2", (TestObjectExpression)(() => 2));
+				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+					Expect.That(ourInner.TestObject1 == 1);
+					Expect.That(ourInner.TestObject2 == 2);
+				}));
+				our.testGroup.Run();
+				Expect.That(our.testGroup.Status() == "1 run, 0 failures");
 			});
 			
 			// Let expressions are evaluated once within a test
-			mainTestGroup.Add(() => {
-				var testGroup = new TestGroup();
-				
+			mainTestGroup.Add((dynamic our) => {
 				var accesses = new Dictionary<string, int>() { { "TestObject lookups", 0 } };
 				
-				testGroup.Let("TestObject", () => accesses["TestObject lookups"] += 1);
-				testGroup.Add((dynamic our) => {
-					Expect.That(our.TestObject == 1);
-					Expect.That(our.TestObject == 1);
-				});
-				testGroup.Run();
-				Expect.That(testGroup.Status() == "1 run, 0 failures");
+				our.testGroup.Let("TestObject", (TestObjectExpression)(() => accesses["TestObject lookups"] += 1));
+				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+					Expect.That(ourInner.TestObject == 1);
+					Expect.That(ourInner.TestObject == 1);
+				}));
+				our.testGroup.Run();
+				Expect.That(our.testGroup.Status() == "1 run, 0 failures");
 			});
 			
 			// Let expressions are re-evaluated for each test
-			mainTestGroup.Add(() => {
-				var testGroup = new TestGroup();
-				
+			mainTestGroup.Add((dynamic our) => {
 				var accesses = new Dictionary<string, int>() { { "TestObject lookups", 0 } };
 				
-				testGroup.Let("TestObject", () => accesses["TestObject lookups"] += 1);
-				testGroup.Add((dynamic our) => {
-					Expect.That(our.TestObject == 1);
-				});
-				testGroup.Add((dynamic our) => {
-					Expect.That(our.TestObject == 2);
-				});
-				testGroup.Run();
-				Console.WriteLine(String.Format("x {0}", accesses["TestObject lookups"]));
-				Expect.That(testGroup.Status() == "2 run, 0 failures");
+				our.testGroup.Let("TestObject", (TestObjectExpression)(() => accesses["TestObject lookups"] += 1));
+				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+					Expect.That(ourInner.TestObject == 1);
+				}));
+				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+					Expect.That(ourInner.TestObject == 2);
+				}));
+				our.testGroup.Run();
+				Expect.That(our.testGroup.Status() == "2 run, 0 failures");
 			});
 			
 			mainTestGroup.Run();
