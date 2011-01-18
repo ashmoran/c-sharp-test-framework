@@ -22,8 +22,8 @@ namespace CSharpTestFramework
 			
 			var mainExampleGroup = new ExampleGroup("Main ExampleGroup");
 
-			ContextFreeExample passingTest = () => { };
-			ContextFreeExample failingTest = () => { throw new Exception(); };
+			ContextFreeExample validExample = () => { };
+			ContextFreeExample failingExample = () => { throw new Exception(); };
 			
 			// TODO: Do we need a bootstrap test for Let?
 			mainExampleGroup.Let("exampleGroup", () => new ExampleGroup("ExampleGroup name"));
@@ -43,7 +43,7 @@ namespace CSharpTestFramework
 			
 			mainExampleGroup.Add("ExampleGroup Status with one valid Example",
 				(dynamic our) => {
-					our.exampleGroup.Add("Valid Example", passingTest);
+					our.exampleGroup.Add("Valid Example", validExample);
 					our.exampleGroup.Run();
 					Expect.That(our.exampleGroup.Status() == "1 run, 0 failures");
 				}
@@ -51,8 +51,8 @@ namespace CSharpTestFramework
 			
 			mainExampleGroup.Add("ExampleGroup Status with one valid Example and one failing Example",
 				(dynamic our) => {
-					our.exampleGroup.Add("Valid Example", passingTest);
-					our.exampleGroup.Add("Invalid Example",failingTest);
+					our.exampleGroup.Add("Valid Example", validExample);
+					our.exampleGroup.Add("Invalid Example",failingExample);
 					our.exampleGroup.Run();
 					Expect.That(our.exampleGroup.Status() == "2 run, 1 failures");
 				}
@@ -78,16 +78,16 @@ namespace CSharpTestFramework
 			});
 			
 			mainExampleGroup.Add("ExampleGroup Report includes the Example names", (dynamic our) => {
-				our.exampleGroup.Add("Example name 1", passingTest);
-				our.exampleGroup.Add("Example name 2", passingTest);
+				our.exampleGroup.Add("Example name 1", validExample);
+				our.exampleGroup.Add("Example name 2", validExample);
 				our.exampleGroup.Run();
 			    Expect.That(our.exampleGroup.Report.Contains("- Example name 1"));
 				Expect.That(our.exampleGroup.Report.Contains("- Example name 2"));
 			});
 
 			mainExampleGroup.Add("ExampleGroup Report flags failing Examples", (dynamic our) => {
-				our.exampleGroup.Add("Example name 1", failingTest);
-				our.exampleGroup.Add("Example name 2", failingTest);
+				our.exampleGroup.Add("Example name 1", failingExample);
+				our.exampleGroup.Add("Example name 2", failingExample);
 				our.exampleGroup.Run();
 			    Expect.That(our.exampleGroup.Report.Contains("X Example name 1"));
 				Expect.That(our.exampleGroup.Report.Contains("X Example name 2"));
