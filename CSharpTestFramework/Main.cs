@@ -15,10 +15,9 @@ namespace CSharpTestFramework
 				exampleGroupWithFailure.Run();
 				if(exampleGroupWithFailure.Status() != "1 run, 1 failures")
 					throw new Exception();
-			} catch(Exception e) {
+			} catch {
 				Console.WriteLine("The bootstrap test failed");
-				// TODO: Just `throw` here
-				throw e;
+				throw;
 			}
 			
 			var mainExampleGroup = new ExampleGroup("Main ExampleGroup");
