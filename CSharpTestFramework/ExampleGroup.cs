@@ -54,20 +54,34 @@ namespace CSharpTestFramework
 				return foundExpression;
 		    }
 		}
-
+		
+		string m_name;
 		string m_status = "Not run";
 		uint m_run;
 		uint m_failures;
 		List<Example> m_examples = new List<Example>();
 		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
 		List<Exception> m_exceptions = new List<Exception>();
-
+		
+		public ExampleGroup(string name = "")
+		{
+			m_name = name;
+		}
+		
 		public string ErrorLog
 		{
 			get
 			{
 				return m_exceptions.
 					Aggregate("", (outputString, exception) => outputString + "\n" + exception.Message + "\n" + exception.StackTrace + "\n");
+			}
+		}
+		
+		public string Report
+		{
+			get
+			{
+				return "Example group: " + m_name;
 			}
 		}
 		

@@ -22,13 +22,13 @@ namespace CSharpTestFramework
 				throw e;
 			}
 			
-			var mainExampleGroup = new ExampleGroup();
+			var mainExampleGroup = new ExampleGroup("Main ExampleGroup");
 
 			ContextFreeExample passingTest = () => { };
 			ContextFreeExample failingTest = () => { throw new Exception(); };
 			
 			// TODO: Do we need a bootstrap test for Let?
-			mainExampleGroup.Let("exampleGroup", () => new ExampleGroup());
+			mainExampleGroup.Let("exampleGroup", () => new ExampleGroup("ExampleGroup name"));
 
 			// An unrun ExampleGroup
 			mainExampleGroup.Add(
@@ -74,6 +74,11 @@ namespace CSharpTestFramework
 				    Expect.That(our.exampleGroup.ErrorLog.Contains("And this fails too"));
 				}
 			);
+			
+			mainExampleGroup.Add((dynamic our) => {
+				our.exampleGroup.Run();
+			    Expect.That(our.exampleGroup.Report.Contains("Example group: ExampleGroup name"));
+			});
 
 			// Let block with passing example
 			mainExampleGroup.Add((dynamic our) => {
@@ -138,6 +143,7 @@ namespace CSharpTestFramework
 			
 			mainExampleGroup.Run();
 			
+			Console.WriteLine(mainExampleGroup.Report);
 			Console.WriteLine(mainExampleGroup.ErrorLog);
 			Console.WriteLine(mainExampleGroup.Status());
 		}
