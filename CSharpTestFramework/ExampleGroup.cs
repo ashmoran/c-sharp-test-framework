@@ -91,6 +91,7 @@ namespace CSharpTestFramework
 			m_letExpressions.Add(objectName, letExpression);
 		}
 		
+		// TODO: Extract and test independently
 		class NamedExample
 		{
 			string m_name;
