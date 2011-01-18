@@ -11,7 +11,7 @@ namespace CSharpTestFramework
 	public delegate void ContextFreeExample();
 	public delegate object Be(); // As in: Let("Foo", (Be)(() => "Bar))
 
-	public class TestGroup
+	public class ExampleGroup
 	{
 		public class LetExpressionDictionary : Dictionary<string, Be> { };
 		
