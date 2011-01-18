@@ -17,6 +17,7 @@ namespace CSharpTestFramework
 					throw new Exception();
 			} catch(Exception e) {
 				Console.WriteLine("The bootstrap test failed");
+				// TODO: Just `throw` here
 				throw e;
 			}
 			
@@ -52,11 +53,17 @@ namespace CSharpTestFramework
 			mainExampleGroup.Add("ExampleGroup Status with one valid Example and one failing Example",
 				(dynamic our) => {
 					our.exampleGroup.Add("Valid Example", validExample);
-					our.exampleGroup.Add("Invalid Example",failingExample);
+					our.exampleGroup.Add("Invalid Example", failingExample);
 					our.exampleGroup.Run();
 					Expect.That(our.exampleGroup.Status() == "2 run, 1 failures");
 				}
 			);
+			
+			mainExampleGroup.Add("ExampleGroup ErrorLog includes exception class and message", (dynamic our) => {
+				our.exampleGroup.Add("Invalid Example", (ContextFreeExample)(() => { throw new ApplicationException("Example failure"); }));
+				our.exampleGroup.Run();
+				Expect.That(our.exampleGroup.ErrorLog.Contains("Invalid Example >> System.ApplicationException: Example failure"));
+			});
 			
 			mainExampleGroup.Add("ExampleGroup ErrorLog",
 				(dynamic our) => {

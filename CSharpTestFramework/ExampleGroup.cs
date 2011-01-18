@@ -58,11 +58,11 @@ namespace CSharpTestFramework
 		string m_name;
 		string m_status = "Not run";
 		string m_report = "";
+		string m_errorLog = "";
 		uint m_run;
 		uint m_failures;
 		List<NamedExample> m_examples = new List<NamedExample>();
 		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
-		List<Exception> m_exceptions = new List<Exception>();
 		
 		public ExampleGroup(string name = "")
 		{
@@ -73,8 +73,7 @@ namespace CSharpTestFramework
 		{
 			get
 			{
-				return m_exceptions.
-					Aggregate("", (outputString, exception) => outputString + "\n" + exception.Message + "\n" + exception.StackTrace + "\n");
+				return m_errorLog;
 			}
 		}
 		
@@ -142,7 +141,7 @@ namespace CSharpTestFramework
 					m_report += "-";
 				} catch (Exception exception) {
 					m_failures++;
-					m_exceptions.Add(exception);
+					m_errorLog += example.Name + " >> " + exception.GetType() + ": " + exception.Message + "\n" + exception.StackTrace + "\n";
 					m_report += "X";
 				}
 				
@@ -152,6 +151,7 @@ namespace CSharpTestFramework
 			m_status = String.Format ("{0} run, {1} failures", m_run, m_failures);
 		}
 		
+		// TODO: Make this into a property
 		public string Status()
 		{
 			return m_status;
