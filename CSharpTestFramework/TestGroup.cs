@@ -5,7 +5,7 @@ using System.Dynamic;
 namespace CSharpTestFramework
 {
 	public delegate void Test();
-	public delegate void ContextualTest(dynamic context);
+	public delegate void Example(dynamic context);
 	public delegate Object TestObjectExpression();
 
 	public class TestGroup
@@ -54,7 +54,7 @@ namespace CSharpTestFramework
 		uint m_run;
 		uint m_failures;
 		List<Test> m_tests = new List<Test>();
-		List<ContextualTest> m_contextualTests = new List<ContextualTest>();
+		List<Example> m_contextualTests = new List<Example>();
 		Dictionary<string, TestObjectExpression> m_letExpressions = new Dictionary<string, TestObjectExpression>();
 		
 		public void Let(string objectName, TestObjectExpression testObjectExpression)
@@ -69,7 +69,7 @@ namespace CSharpTestFramework
 			m_tests.Add(test);
 		}
 
-		public void Add(ContextualTest test)
+		public void Add(Example test)
 		{
 			m_run++;
 			m_contextualTests.Add(test);

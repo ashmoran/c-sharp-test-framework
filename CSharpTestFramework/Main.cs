@@ -67,7 +67,7 @@ namespace CSharpTestFramework
 			// Let block with passing example
 			mainTestGroup.Add((dynamic our) => {
 				our.testGroup.Let("TestObject", (TestObjectExpression)(() => "value of TestObject"));
-				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+				our.testGroup.Add((Example)((dynamic ourInner) => {
 					Expect.That(ourInner.TestObject == "value of TestObject");
 				}));
 				our.testGroup.Run();
@@ -77,7 +77,7 @@ namespace CSharpTestFramework
 			// Let block with failing example
 			mainTestGroup.Add((dynamic our) => {
 				our.testGroup.Let("TestObject", (TestObjectExpression)(() => "value of TestObject"));
-				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+				our.testGroup.Add((Example)((dynamic ourInner) => {
 					Expect.That(our.TestObject == "wrong value of TestObject");
 				}));
 				our.testGroup.Run();
@@ -88,7 +88,7 @@ namespace CSharpTestFramework
 			mainTestGroup.Add((dynamic our) => {
 				our.testGroup.Let("TestObject1", (TestObjectExpression)(() => 1));
 				our.testGroup.Let("TestObject2", (TestObjectExpression)(() => 2));
-				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+				our.testGroup.Add((Example)((dynamic ourInner) => {
 					Expect.That(ourInner.TestObject1 == 1);
 					Expect.That(ourInner.TestObject2 == 2);
 				}));
@@ -101,7 +101,7 @@ namespace CSharpTestFramework
 				var accesses = new Dictionary<string, int>() { { "TestObject lookups", 0 } };
 				
 				our.testGroup.Let("TestObject", (TestObjectExpression)(() => accesses["TestObject lookups"] += 1));
-				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+				our.testGroup.Add((Example)((dynamic ourInner) => {
 					Expect.That(ourInner.TestObject == 1);
 					Expect.That(ourInner.TestObject == 1);
 				}));
@@ -114,10 +114,10 @@ namespace CSharpTestFramework
 				var accesses = new Dictionary<string, int>() { { "TestObject lookups", 0 } };
 				
 				our.testGroup.Let("TestObject", (TestObjectExpression)(() => accesses["TestObject lookups"] += 1));
-				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+				our.testGroup.Add((Example)((dynamic ourInner) => {
 					Expect.That(ourInner.TestObject == 1);
 				}));
-				our.testGroup.Add((ContextualTest)((dynamic ourInner) => {
+				our.testGroup.Add((Example)((dynamic ourInner) => {
 					Expect.That(ourInner.TestObject == 2);
 				}));
 				our.testGroup.Run();
