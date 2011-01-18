@@ -16,24 +16,32 @@ namespace CSharpTestFramework
 			// TODO: Name this type
 			Dictionary<string, TestObjectExpression> m_letExpressions;
 			
+			Dictionary<string, object> m_evaluatedExpressions = new Dictionary<string, object>();
+			
 			public TestContext(Dictionary<string, TestObjectExpression> letExpressions)
 			{
 				m_letExpressions = letExpressions;
 			}
 				
-		    // If you try to get a value of a property 
-		    // not defined in the class, this method is called.
 		    public override bool TryGetMember(GetMemberBinder binder, out object result)
 		    {
-		        // If the property name is found in a dictionary,
-		        // set the result parameter to the property value and return true.
-		        // Otherwise, return false.
+				object expressionValue;
+				bool foundExpressionValue = m_evaluatedExpressions.TryGetValue(binder.Name, out expressionValue);
+				if (foundExpressionValue)
+				{
+					result = expressionValue;
+					return foundExpressionValue;
+				}
+				
 				TestObjectExpression expression;
 				bool foundExpression;
 		        foundExpression = m_letExpressions.TryGetValue(binder.Name, out expression);
 				
 				if (foundExpression)
-					result = "MOO";
+				{
+					result = expression();
+					m_evaluatedExpressions.Add(binder.Name, result);
+				}
 				else
 					result = null;
 
@@ -75,8 +83,8 @@ namespace CSharpTestFramework
 				} catch (Exception e) {
 					m_failures++;
 					// TODO: Turn this debugging info into a feature
-					Console.WriteLine (e.Message);
-					Console.WriteLine (e.StackTrace);
+					Console.WriteLine(e.Message);
+					Console.WriteLine(e.StackTrace);
 				}
 			}
 			
@@ -88,15 +96,15 @@ namespace CSharpTestFramework
 				} catch (Exception e) {
 					m_failures++;
 					// TODO: Turn this debugging info into a feature
-					Console.WriteLine (e.Message);
-					Console.WriteLine (e.StackTrace);
+					Console.WriteLine(e.Message);
+					Console.WriteLine(e.StackTrace);
 				}
 			}
 			
 			m_status = String.Format ("{0} run, {1} failures", m_run, m_failures);
 		}
 
-		public string Status ()
+		public string Status()
 		{
 			return m_status;
 		}

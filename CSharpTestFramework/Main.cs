@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CSharpTestFramework
 {
@@ -25,12 +26,14 @@ namespace CSharpTestFramework
 
 			Test passingTest = () => { };
 			Test failingTest = () => { throw new Exception(); };
+			
+			// TODO: Do we need a bootstrap test for Let?
+			mainTestGroup.Let("testGroup", () => new TestGroup());
 
 			// An unrun TestGroup
 			mainTestGroup.Add(
-				() => {
-					var testGroup = new TestGroup();
-					Expect.That(testGroup.Status() == "Not run");
+				(dynamic our) => {
+					Expect.That(our.testGroup.Status() == "Not run");
 				}
 			);
 			
@@ -85,6 +88,26 @@ namespace CSharpTestFramework
 				testGroup.Run();
 				Expect.That(testGroup.Status() == "1 run, 1 failures");
 			});
+			
+			// Let expressions are evaluated once within a test
+			mainTestGroup.Add(() => {
+				var testGroup = new TestGroup();
+				
+				var accesses = new Dictionary<string, int>() { { "TestObject lookups", 0 } };
+				
+				testGroup.Let("TestObject", () => accesses["TestObject lookups"] += 1);
+				testGroup.Add((dynamic our) => {
+//					Console.WriteLine(String.Format("{0}", our.TestObject));
+					Expect.That(our.TestObject == 1);
+					Expect.That(our.TestObject == 1);
+				});
+				testGroup.Run();
+//				Console.WriteLine(String.Format("x {0}", accesses["TestObject lookups"]));
+//				Expect.That(accesses["TestObject lookups"] == 1);
+				Expect.That(testGroup.Status() == "1 run, 0 failures");
+			});
+			
+			// TODO: Let expressions are re-evaluated for each test
 			
 			mainTestGroup.Run();
 			
