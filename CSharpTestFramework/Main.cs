@@ -21,11 +21,11 @@ namespace CSharpTestFramework
 				throw e;
 			}
 			
+			var mainTestGroup = new TestGroup();
+
 			Test passingTest = () => { };
 			Test failingTest = () => { throw new Exception(); };
-			
-			var mainTestGroup = new TestGroup();
-			
+
 			// An unrun TestGroup
 			mainTestGroup.Add(
 				() => {
@@ -63,6 +63,28 @@ namespace CSharpTestFramework
 					Expect.That(testGroup.Status() == "2 run, 1 failures");
 				}
 			);
+
+			// Let block with passing example
+			mainTestGroup.Add(() => {
+				var testGroup = new TestGroup();
+				testGroup.Let("TestObject", () => "value of TestObject");
+				testGroup.Add((dynamic our) => {
+					Expect.That(our.TestObject == "value of TestObject");
+				});
+				testGroup.Run();
+				Expect.That(testGroup.Status() == "1 run, 0 failures");
+			});
+			
+			// Let block with failing example
+			mainTestGroup.Add(() => {
+				var testGroup = new TestGroup();
+				testGroup.Let("TestObject", () => "value of TestObject");
+				testGroup.Add((dynamic our) => {
+					Expect.That(our.TestObject == "wrong value of TestObject");
+				});
+				testGroup.Run();
+				Expect.That(testGroup.Status() == "1 run, 1 failures");
+			});
 			
 			mainTestGroup.Run();
 			
