@@ -10,15 +10,17 @@ namespace CSharpTestFramework
 
 	public class TestGroup
 	{
+		public class LetExpressionDictionary : Dictionary<string, Be> { };
+		
 		// TODO: Extract and test independently
 		public class ExampleContext : DynamicObject
 		{
 			// TODO: Name this type
-			Dictionary<string, Be> m_letExpressions;
+			LetExpressionDictionary m_letExpressions;
 			
 			Dictionary<string, object> m_evaluatedExpressions = new Dictionary<string, object>();
 			
-			public ExampleContext(Dictionary<string, Be> letExpressions)
+			public ExampleContext(LetExpressionDictionary letExpressions)
 			{
 				m_letExpressions = letExpressions;
 			}
@@ -54,7 +56,7 @@ namespace CSharpTestFramework
 		uint m_run;
 		uint m_failures;
 		List<Example> m_examples = new List<Example>();
-		Dictionary<string, Be> m_letExpressions = new Dictionary<string, Be>();
+		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
 		
 		public void Let(string objectName, Be letExpression)
 		{
