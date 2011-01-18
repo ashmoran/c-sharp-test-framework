@@ -4,21 +4,21 @@ using System.Dynamic;
 
 namespace CSharpTestFramework
 {
-	public delegate void Test();
 	public delegate void Example(dynamic context);
-	public delegate Object Be(); // As in: Let("Foo", (Be)(() => "Bar))
+	public delegate void ContextFreeExample();
+	public delegate object Be(); // As in: Let("Foo", (Be)(() => "Bar))
 
 	public class TestGroup
 	{
 		// TODO: Extract and test independently
-		public class TestContext : DynamicObject
+		public class ExampleContext : DynamicObject
 		{
 			// TODO: Name this type
 			Dictionary<string, Be> m_letExpressions;
 			
 			Dictionary<string, object> m_evaluatedExpressions = new Dictionary<string, object>();
 			
-			public TestContext(Dictionary<string, Be> letExpressions)
+			public ExampleContext(Dictionary<string, Be> letExpressions)
 			{
 				m_letExpressions = letExpressions;
 			}
@@ -53,46 +53,33 @@ namespace CSharpTestFramework
 		string m_status = "Not run";
 		uint m_run;
 		uint m_failures;
-		List<Test> m_tests = new List<Test>();
-		List<Example> m_contextualTests = new List<Example>();
+		List<Example> m_examples = new List<Example>();
 		Dictionary<string, Be> m_letExpressions = new Dictionary<string, Be>();
 		
-		public void Let(string objectName, Be testObjectExpression)
+		public void Let(string objectName, Be letExpression)
 		{
-			m_letExpressions.Add(objectName, testObjectExpression);
+			m_letExpressions.Add(objectName, letExpression);
 		}
 
-		public void Add(Test test)
+		public void Add(Example example)
 		{
-			m_run++;
-			// this needs to move really, need a test to force it
-			m_tests.Add(test);
-		}
-
-		public void Add(Example test)
-		{
-			m_run++;
-			m_contextualTests.Add(test);
+			m_examples.Add(example);
 		}
 		
+		public void Add(ContextFreeExample example)
+		{
+			m_examples.Add((dynamic unusedContext) => example());
+		}
+
 		public void Run ()
 		{
-			foreach (var test in m_tests) {
-				try {
-					test();
-				} catch (Exception e) {
-					m_failures++;
-					// TODO: Turn this debugging info into a feature
-					Console.WriteLine(e.Message);
-					Console.WriteLine(e.StackTrace);
-				}
-			}
-			
-			foreach (var test in m_contextualTests) {
-				var context = new TestContext(m_letExpressions);
+			foreach (var example in m_examples) {
+				var context = new ExampleContext(m_letExpressions);
+
+				m_run++;
 				
 				try {
-					test(context);
+					example(context);
 				} catch (Exception e) {
 					m_failures++;
 					// TODO: Turn this debugging info into a feature

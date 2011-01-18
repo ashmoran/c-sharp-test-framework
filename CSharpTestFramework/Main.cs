@@ -24,8 +24,8 @@ namespace CSharpTestFramework
 			
 			var mainTestGroup = new TestGroup();
 
-			Test passingTest = () => { };
-			Test failingTest = () => { throw new Exception(); };
+			ContextFreeExample passingTest = () => { };
+			ContextFreeExample failingTest = () => { throw new Exception(); };
 			
 			// TODO: Do we need a bootstrap test for Let?
 			mainTestGroup.Let("testGroup", () => new TestGroup());
