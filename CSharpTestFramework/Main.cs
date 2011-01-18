@@ -112,6 +112,7 @@ namespace CSharpTestFramework
 			mainExampleGroup.Add("ExampleGroup with Let expression and one failing Example", (dynamic our) => {
 				our.exampleGroup.Let("TestObject", (Be)(() => "value of TestObject"));
 				our.exampleGroup.Add("Expect the wrong value", (Example)((dynamic ourInner) => {
+					// This is actually failing because we used `our` not `ourInner`
 					Expect.That(our.TestObject == "wrong value of TestObject");
 				}));
 				our.exampleGroup.Run();
