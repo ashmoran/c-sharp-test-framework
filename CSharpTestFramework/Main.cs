@@ -89,6 +89,19 @@ namespace CSharpTestFramework
 				Expect.That(testGroup.Status() == "1 run, 1 failures");
 			});
 			
+			// Multiple let blocks
+			mainTestGroup.Add(() => {
+				var testGroup = new TestGroup();
+				testGroup.Let("TestObject1", () => 1);
+				testGroup.Let("TestObject2", () => 2);
+				testGroup.Add((dynamic our) => {
+					Expect.That(our.TestObject1 == 1);
+					Expect.That(our.TestObject2 == 2);
+				});
+				testGroup.Run();
+				Expect.That(testGroup.Status() == "1 run, 0 failures");
+			});
+			
 			// Let expressions are evaluated once within a test
 			mainTestGroup.Add(() => {
 				var testGroup = new TestGroup();
