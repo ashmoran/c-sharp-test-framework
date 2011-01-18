@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpTestFramework", "CSharpTestFramework\CSharpTestFramework.csproj", "{4FFE1744-5E21-466D-9708-8259C932E06E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A56687A2-E1E2-46FC-85A9-E58EF611B36A}"
+	ProjectSection(SolutionItems) = preProject
+		README = README
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +18,8 @@ Global
 		{4FFE1744-5E21-466D-9708-8259C932E06E}.Debug|x86.Build.0 = Debug|x86
 		{4FFE1744-5E21-466D-9708-8259C932E06E}.Release|x86.ActiveCfg = Release|x86
 		{4FFE1744-5E21-466D-9708-8259C932E06E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = CSharpTestFramework\CSharpTestFramework.csproj
