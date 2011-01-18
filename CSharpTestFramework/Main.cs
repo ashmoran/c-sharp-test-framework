@@ -28,7 +28,6 @@ namespace CSharpTestFramework
 			// TODO: Do we need a bootstrap test for Let?
 			mainExampleGroup.Let("exampleGroup", () => new ExampleGroup("ExampleGroup name"));
 
-			// An unrun ExampleGroup
 			mainExampleGroup.Add("An unrun ExampleGroup Status indicates it has not been run",
 				(dynamic our) => {
 					Expect.That(our.exampleGroup.Status() == "Not run");
