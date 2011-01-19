@@ -221,8 +221,6 @@ namespace CSharpTestFramework
 				}));
 				our.exampleGroup.Run();
 				
-				Console.WriteLine(our.exampleGroup.ErrorLog);
-				
 				Expect.That(our.exampleGroup.Status, Is.EqualTo("2 run, 0 failures"));
 			});
 			
