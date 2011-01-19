@@ -14,27 +14,21 @@ namespace CSharpTestFramework
 		{
 			// TODO: Turn this debugging exception message into a feature
 			if (condition == false)
-				throw new Exception("Condition was false");
+				throw new ExpectationException("Condition was false");
 		}
 		
-		
-		// Expect.That(1, Is.EqualTo(2));
-		public static void That(object actual, object matcher)
+		public static void That(object actual, Matcher matcher)
 		{
-			if (matcher.GetType() == typeof(ContainsMatcher)) {
-				var ourMatcher = (ContainsMatcher)matcher;
-				ourMatcher.Match(actual);
-			}
-			else if (!actual.Equals(matcher))
-			{
-				throw new ExpectationException(String.Format(
-					"Expected {0} \"{1}\" to be equal to {2} \"{3}\", but it was not", actual.GetType().ToString(), actual, matcher.GetType().ToString(), matcher
-				));
-			}
+			matcher.Match(actual);
 		}
 	}
 	
-	class ContainsMatcher
+	public interface Matcher
+	{
+		public void Match(dynamic actual);
+	}
+	
+	class ContainsMatcher : Matcher
 	{
 		object m_contained;
 		
@@ -45,8 +39,6 @@ namespace CSharpTestFramework
 		
 		public void Match(dynamic actual)
 		{
-			Console.WriteLine(actual);
-			Console.WriteLine(m_contained);
 			// TODO: Figure out how to do this without a cast
 			if (!actual.Contains((string)m_contained))
 			{
@@ -57,17 +49,37 @@ namespace CSharpTestFramework
 		}
 	}
 	
+	public class IsEqualToMatcher : Matcher
+	{
+		object m_expected;
+		
+		public IsEqualToMatcher(object expected)
+		{
+			m_expected = expected;
+		}
+		
+		public void Match(dynamic actual)
+		{
+			if (!actual.Equals(m_expected))
+			{
+				throw new ExpectationException(String.Format(
+					"Expected {0} \"{1}\" to be equal to {2} \"{3}\", but it was not", actual.GetType().ToString(), actual, m_expected.GetType().ToString(), m_expected
+				));
+			}
+		}
+	}
+	
 	public class Is
 	{
-		public static object EqualTo(object other)
+		public static Matcher EqualTo(object expected)
 		{
-			return other;
+			return new IsEqualToMatcher(expected);
 		}
 	}
 	
 	public class Contains
 	{
-		public static object Value(object contained)
+		public static Matcher Value(object contained)
 		{
 			return new ContainsMatcher(contained);
 		}

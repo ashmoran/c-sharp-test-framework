@@ -10,6 +10,7 @@ namespace CSharpTestFramework
 	// TODO: Rename to SimpleExample?
 	public delegate void ContextFreeExample();
 	public delegate object Be(); // As in: Let("Foo", (Be)(() => "Bar))
+	public delegate void As(dynamic exampleGroup); // As in: Describe("Foo", (As)((dynamic group) => { ... }))
 
 	public class ExampleGroup
 	{
@@ -91,6 +92,11 @@ namespace CSharpTestFramework
 			{
 				return m_report;
 			}
+		}
+		
+		public void Describe(string exampleGroupName, As examples)
+		{
+			
 		}
 		
 		public void Let(string objectName, Be letExpression)
