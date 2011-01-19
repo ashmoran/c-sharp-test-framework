@@ -70,11 +70,7 @@ namespace CSharpTestFramework
 			
 			mainExampleGroup.Add("Expect.That ... Is.EqualTo formats an error", (dynamic our) => {
 				our.exampleGroup.Add("Invalid Example", (ContextFreeExample)(() => {
-					try {
-						Expect.That("foo", Is.EqualTo("bar"));
-					} catch(Exception e) {
-						throw;
-					}
+					Expect.That("foo", Is.EqualTo("bar"));
 				}));
 				our.exampleGroup.Run();
 				Expect.That(our.exampleGroup.ErrorLog.Contains("Invalid Example"));
@@ -82,6 +78,21 @@ namespace CSharpTestFramework
 				Expect.That(our.exampleGroup.ErrorLog.Contains("Expected System.String \"foo\" to be equal to System.String \"bar\", but it was not"));
 			});
 			
+			mainExampleGroup.Add("Expect.That ... Contains.Value formats an error", (dynamic our) => {
+				our.exampleGroup.Add("Invalid Example", (ContextFreeExample)(() => {
+					try {
+						Expect.That("foo baz", Contains.Value("bar"));
+					} catch(Exception e) {
+						Console.WriteLine(e.Message);
+						throw e;
+					}
+				}));
+				our.exampleGroup.Run();
+				Expect.That(our.exampleGroup.ErrorLog.Contains("Invalid Example"));
+				Expect.That(our.exampleGroup.ErrorLog.Contains("CSharpTestFramework.ExpectationException"));
+				Expect.That(our.exampleGroup.ErrorLog.Contains("Expected System.String \"foo baz\" to contain System.String \"bar\", but it did not"));
+			});
+
 			mainExampleGroup.Add("ExampleGroup ErrorLog",
 				(dynamic our) => {
 					our.exampleGroup.Add("Failing Example", (ContextFreeExample)(() => {
@@ -172,6 +183,15 @@ namespace CSharpTestFramework
 				}));
 				our.exampleGroup.Run();
 				Expect.That(our.exampleGroup.Status, Is.EqualTo("2 run, 0 failures"));
+			});
+			
+			// Expectations
+			mainExampleGroup.Add("Expect.That ...", () => {
+				Expect.That(true);
+			});
+			
+			mainExampleGroup.Add("Expect.That ... Contains.Value", () => {
+				Expect.That("foo bar baz", Contains.Value("bar"));
 			});
 			
 			mainExampleGroup.Run();
