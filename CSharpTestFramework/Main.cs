@@ -82,7 +82,6 @@ namespace CSharpTestFramework
 					try {
 						Expect.That("foo baz", Contains.Value("bar"));
 					} catch(Exception e) {
-						Console.WriteLine(e.Message);
 						throw e;
 					}
 				}));
@@ -200,7 +199,7 @@ namespace CSharpTestFramework
 				Expect.That(our.exampleGroup.Report, Contains.Value("Another example"));
 			});
 			
-			mainExampleGroup.Add("ExampleGroups can be nested with Describe", (dynamic our) => {
+			mainExampleGroup.Add("ExampleGroups with nested Describes count all Examples", (dynamic our) => {
 				our.exampleGroup.Describe("A description of a nested ExampleGroup", (As)((dynamic ourInner) => {
 					ourInner.Add("An example", (ContextFreeExample)(() => { }));
 					ourInner.Describe("A deeply-nested ExampleGroup name", (As)((dynamic ourInner2) => {

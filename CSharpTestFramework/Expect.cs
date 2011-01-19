@@ -29,6 +29,7 @@ namespace CSharpTestFramework
 	public interface Matcher
 	{
 		public bool Match(dynamic actual);
+		// TODO: Make this a property now I know how :)
 		public string GetFailureMessage();
 	}
 	
