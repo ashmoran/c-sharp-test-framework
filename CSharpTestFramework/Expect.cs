@@ -21,7 +21,7 @@ namespace CSharpTestFramework
 		{
 			if (!matcher.Match(actual))
 			{
-				throw new ExpectationException(matcher.GetFailureMessage());
+				throw new ExpectationException(matcher.FailureMessage);
 			}
 		}
 	}
@@ -29,8 +29,7 @@ namespace CSharpTestFramework
 	public interface Matcher
 	{
 		public bool Match(dynamic actual);
-		// TODO: Make this a property now I know how :)
-		public string GetFailureMessage();
+		string FailureMessage { get; }
 	}
 	
 	class ContainsMatcher : Matcher
@@ -51,11 +50,15 @@ namespace CSharpTestFramework
 			return actual.Contains((string)m_contained);
 		}
 		
-		public string GetFailureMessage()
+		public string FailureMessage
 		{
-			return String.Format(
-				"Expected {0} \"{1}\" to contain {2} \"{3}\", but it did not", m_actual.GetType().ToString(), m_actual, m_contained.GetType().ToString(), m_contained
-			);
+			get
+			{
+				return String.Format(
+					"Expected {0} \"{1}\" to contain {2} \"{3}\", but it did not",
+				    m_actual.GetType().ToString(), m_actual, m_contained.GetType().ToString(), m_contained
+				);
+			}
 		}
 	}
 	
@@ -75,11 +78,15 @@ namespace CSharpTestFramework
 			return actual.Equals(m_expected);
 		}
 		
-		public string GetFailureMessage()
+		public string FailureMessage
 		{
-			return String.Format(
-				"Expected {0} \"{1}\" to be equal to {2} \"{3}\", but it was not", m_actual.GetType().ToString(), m_actual, m_expected.GetType().ToString(), m_expected
-			);
+			get
+			{
+				return String.Format(
+					"Expected {0} \"{1}\" to be equal to {2} \"{3}\", but it was not",
+				     m_actual.GetType().ToString(), m_actual, m_expected.GetType().ToString(), m_expected
+				);
+			}
 		}
 	}
 	
