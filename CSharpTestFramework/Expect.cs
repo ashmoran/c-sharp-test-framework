@@ -19,17 +19,22 @@ namespace CSharpTestFramework
 		
 		public static void That(object actual, Matcher matcher)
 		{
-			matcher.Match(actual);
+			if (!matcher.Match(actual))
+			{
+				throw new ExpectationException(matcher.GetFailureMessage());
+			}
 		}
 	}
 	
 	public interface Matcher
 	{
-		public void Match(dynamic actual);
+		public bool Match(dynamic actual);
+		public string GetFailureMessage();
 	}
 	
 	class ContainsMatcher : Matcher
 	{
+		object m_actual;
 		object m_contained;
 		
 		public ContainsMatcher(object contained)
@@ -37,20 +42,25 @@ namespace CSharpTestFramework
 			m_contained = contained;
 		}
 		
-		public void Match(dynamic actual)
+		public bool Match(dynamic actual)
 		{
+			m_actual = actual;
+			
 			// TODO: Figure out how to do this without a cast
-			if (!actual.Contains((string)m_contained))
-			{
-				throw new ExpectationException(String.Format(
-					"Expected {0} \"{1}\" to contain {2} \"{3}\", but it did not", actual.GetType().ToString(), actual, m_contained.GetType().ToString(), m_contained
-				));
-			}
+			return actual.Contains((string)m_contained);
+		}
+		
+		public string GetFailureMessage()
+		{
+			return String.Format(
+				"Expected {0} \"{1}\" to contain {2} \"{3}\", but it did not", m_actual.GetType().ToString(), m_actual, m_contained.GetType().ToString(), m_contained
+			);
 		}
 	}
 	
 	public class IsEqualToMatcher : Matcher
 	{
+		object m_actual;
 		object m_expected;
 		
 		public IsEqualToMatcher(object expected)
@@ -58,14 +68,17 @@ namespace CSharpTestFramework
 			m_expected = expected;
 		}
 		
-		public void Match(dynamic actual)
+		public bool Match(dynamic actual)
 		{
-			if (!actual.Equals(m_expected))
-			{
-				throw new ExpectationException(String.Format(
-					"Expected {0} \"{1}\" to be equal to {2} \"{3}\", but it was not", actual.GetType().ToString(), actual, m_expected.GetType().ToString(), m_expected
-				));
-			}
+			m_actual = actual;
+			return actual.Equals(m_expected);
+		}
+		
+		public string GetFailureMessage()
+		{
+			return String.Format(
+				"Expected {0} \"{1}\" to be equal to {2} \"{3}\", but it was not", m_actual.GetType().ToString(), m_actual, m_expected.GetType().ToString(), m_expected
+			);
 		}
 	}
 	
