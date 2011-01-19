@@ -23,7 +23,7 @@ namespace CSharpTestFramework
  		int ExamplesFailed { get; }
 		string Report { get; }
 		string ErrorLog { get; }
-		void Run(ExampleContext onlyUsedForExamplesNotGroups = null);
+		void Run(ExampleContext inheritedContext = null);
 	}
 	
 	// TODO: Extract and test independently
@@ -152,7 +152,7 @@ namespace CSharpTestFramework
 		}
 		
 		// TODO: Extract reporting
-		// TODO: Fix this bizarre null-defaulted parameter -  I think it's because we currently don't nest contexts
+		// TODO: Fix this null-defaulted parameter - it's because a top-level ExampleGroup creates the first context
 		public void Run(ExampleContext inheritedContext = null)
 		{
 			m_report += "Example group: " + m_name + "\n";
