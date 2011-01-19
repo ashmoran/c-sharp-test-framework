@@ -61,7 +61,6 @@ namespace CSharpTestFramework
 			mainExampleGroup.Add("ExampleGroup ErrorLog includes exception class and message", (dynamic our) => {
 				our.exampleGroup.Add("Invalid Example", (ContextFreeExample)(() => { throw new ApplicationException("Example failure"); }));
 				our.exampleGroup.Run();
-				// TODO: Expect.That Contains
 				// This is a weak spec, but the formatting is WIP
 				Expect.That(our.exampleGroup.ErrorLog.Contains("Invalid Example"));
 				Expect.That(our.exampleGroup.ErrorLog.Contains("System.ApplicationException"));
