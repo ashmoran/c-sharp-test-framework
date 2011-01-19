@@ -60,9 +60,10 @@ namespace CSharpTestFramework
 		string m_status = "Not run";
 		string m_report = "";
 		string m_errorLog = "";
-		uint m_run;
-		uint m_failures;
+		int m_run;
+		int m_failures;
 		List<NamedExample> m_examples = new List<NamedExample>();
+		List<ExampleGroup> m_exampleGroups = new List<ExampleGroup>();
 		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
 		
 		public ExampleGroup(string name = "")
@@ -75,6 +76,22 @@ namespace CSharpTestFramework
 			get
 			{
 				return m_status;
+			}
+		}
+		
+		public int ExamplesRun
+		{
+			get
+			{
+				return m_run;
+			}
+		}
+
+		public int ExamplesFailed
+		{
+			get
+			{
+				return m_failures;
 			}
 		}
 
@@ -96,7 +113,9 @@ namespace CSharpTestFramework
 		
 		public void Describe(string exampleGroupName, As examples)
 		{
-			
+			var exampleGroup = new ExampleGroup(exampleGroupName);
+			examples(exampleGroup);
+			m_exampleGroups.Add(exampleGroup);
 		}
 		
 		public void Let(string objectName, Be letExpression)
@@ -160,6 +179,15 @@ namespace CSharpTestFramework
 				}
 				
 				m_report += " " + example.Name + "\n";
+			}
+			
+			foreach (var exampleGroup in m_exampleGroups)
+			{
+				exampleGroup.Run();
+				
+				m_report += exampleGroup.Report;
+				m_run += exampleGroup.ExamplesRun;
+				m_failures += exampleGroup.ExamplesFailed;
 			}
 			
 			m_status = String.Format ("{0} run, {1} failures", m_run, m_failures);

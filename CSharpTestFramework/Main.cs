@@ -184,16 +184,33 @@ namespace CSharpTestFramework
 				Expect.That(our.exampleGroup.Status, Is.EqualTo("2 run, 0 failures"));
 			});
 			
-//			mainExampleGroup.Add("ExampleGroups can be nested with Describe", (dynamic our) => {
-//				our.exampleGroup.Describe("A description of a nested ExampleGroup", (As)((dynamic ourInner) => {
-//					ourInner.Add("An example", (ContextFreeExample)(() => { }));
-//				}));
-//				our.exampleGroup.Run();
-//				
-//				Expect.That(our.exampleGroup.Report, Contains.Value("ExampleGroups can be nested with Describe"));
-//				Expect.That(our.exampleGroup.Report, Contains.Value("A description of a nested ExampleGroup"));
-//				Expect.That(our.exampleGroup.Status, Is.EqualTo("1 run, 0 failures"));
-//			});
+			mainExampleGroup.Add("ExampleGroups can be nested with Describe", (dynamic our) => {
+				our.exampleGroup.Describe("A description of a nested ExampleGroup", (As)((dynamic ourInner) => {
+					ourInner.Add("An example", (ContextFreeExample)(() => { }));
+					ourInner.Describe("A deeply-nested ExampleGroup name", (As)((dynamic ourInner2) => {
+						ourInner2.Add("Another example", (ContextFreeExample)(() => { }));
+					}));
+				}));
+				our.exampleGroup.Run();
+				
+				Expect.That(our.exampleGroup.Report, Contains.Value("ExampleGroup name"));
+				Expect.That(our.exampleGroup.Report, Contains.Value("A description of a nested ExampleGroup"));
+				Expect.That(our.exampleGroup.Report, Contains.Value("A deeply-nested ExampleGroup name"));
+				Expect.That(our.exampleGroup.Report, Contains.Value("An example"));
+				Expect.That(our.exampleGroup.Report, Contains.Value("Another example"));
+			});
+			
+			mainExampleGroup.Add("ExampleGroups can be nested with Describe", (dynamic our) => {
+				our.exampleGroup.Describe("A description of a nested ExampleGroup", (As)((dynamic ourInner) => {
+					ourInner.Add("An example", (ContextFreeExample)(() => { }));
+					ourInner.Describe("A deeply-nested ExampleGroup name", (As)((dynamic ourInner2) => {
+						ourInner2.Add("An example", (ContextFreeExample)(() => { throw new Exception("Fail"); }));
+					}));
+				}));
+				our.exampleGroup.Run();
+				
+				Expect.That(our.exampleGroup.Status, Is.EqualTo("2 run, 1 failures"));
+			});
 			
 			// Expectations
 			mainExampleGroup.Add("Expect.That ...", () => {
