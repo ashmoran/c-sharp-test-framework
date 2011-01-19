@@ -12,7 +12,10 @@ namespace CSharpTestFramework
 	public delegate object Be(); // As in: Let("Foo", (Be)(() => "Bar))
 	public delegate void As(dynamic exampleGroup); // As in: Describe("Foo", (As)((dynamic group) => { ... }))
 	
-	public class LetExpressionDictionary : Dictionary<string, Be> { };
+	public class LetExpressionDictionary : Dictionary<string, Be> {
+		public LetExpressionDictionary() : base() { }
+		public LetExpressionDictionary(LetExpressionDictionary template) : base(template) { }
+	};
 
 	interface SpecComponent
 	{
@@ -111,9 +114,13 @@ namespace CSharpTestFramework
 		List<SpecComponent> m_specComponents = new List<SpecComponent>();
 		LetExpressionDictionary m_letExpressions = new LetExpressionDictionary();
 		
-		public ExampleGroup(string name = "")
+		public ExampleGroup(string name = "", LetExpressionDictionary inheritedLetExpressions = null)
 		{
 			m_name = name;
+			if (inheritedLetExpressions != null)
+			{
+				m_letExpressions = new LetExpressionDictionary(inheritedLetExpressions);
+			}
 		}
 		
 		public string Status { get { return m_status; } }
@@ -124,7 +131,7 @@ namespace CSharpTestFramework
 		
 		public void Describe(string exampleGroupName, As examples)
 		{
-			var exampleGroup = new ExampleGroup(exampleGroupName);
+			var exampleGroup = new ExampleGroup(exampleGroupName, m_letExpressions);
 			examples(exampleGroup);
 			m_specComponents.Add(exampleGroup);
 		}
@@ -146,7 +153,7 @@ namespace CSharpTestFramework
 		
 		// TODO: Extract reporting
 		// TODO: Fix this bizarre null-defaulted parameter -  I think it's because we currently don't nest contexts
-		public void Run(ExampleContext onlyUsedForExamplesNotGroups = null)
+		public void Run(ExampleContext inheritedContext = null)
 		{
 			m_report += "Example group: " + m_name + "\n";
 			

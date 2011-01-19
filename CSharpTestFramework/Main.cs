@@ -211,6 +211,23 @@ namespace CSharpTestFramework
 				Expect.That(our.exampleGroup.Status, Is.EqualTo("2 run, 1 failures"));
 			});
 			
+			mainExampleGroup.Add("Examples in nested ExampleGroups can use Let expressions from higher up", (dynamic our) => {
+				our.exampleGroup.Let("TheNumberOne", (Be)(() => 1));
+				our.exampleGroup.Describe("A description of a nested ExampleGroup", (As)((dynamic ourInner) => {
+					ourInner.Add("An example", (Example)((dynamic context) => { Expect.That(context.TheNumberOne, Is.EqualTo(1)); }));
+					ourInner.Describe("A deeply-nested ExampleGroup name", (As)((dynamic ourInner2) => {
+						ourInner2.Add("An example", (Example)((dynamic context2) => { Expect.That(context2.TheNumberOne, Is.EqualTo(1)); }));
+					}));
+				}));
+				our.exampleGroup.Run();
+				
+				Console.WriteLine(our.exampleGroup.ErrorLog);
+				
+				Expect.That(our.exampleGroup.Status, Is.EqualTo("2 run, 0 failures"));
+			});
+			
+			// TODO: ErrorLog from nested Examples is included in nested log
+			
 			// Expectations
 			mainExampleGroup.Add("Expect.That ...", () => {
 				Expect.That(true);
